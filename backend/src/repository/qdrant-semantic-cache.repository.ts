@@ -29,6 +29,14 @@ export class QdrantSemanticCacheRepository implements SemanticCacheRepository {
     });
   }
 
+  async clear(): Promise<void> {
+    const { collections } = await this.client.getCollections();
+    if (collections.some((c) => c.name === this.collectionName)) {
+      await this.client.deleteCollection(this.collectionName);
+    }
+    await this.ensureCollection();
+  }
+
   async findSimilar(
     queryVector: number[],
     similarityThreshold = 0.92,

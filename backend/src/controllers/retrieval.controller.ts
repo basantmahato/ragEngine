@@ -10,7 +10,7 @@ export class RetrievalController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { question, topK, threshold } = req.body ?? {};
+      const { question, topK, threshold, minScore } = req.body ?? {};
 
       if (!question || typeof question !== "string" || !question.trim()) {
         res.status(400).json({
@@ -23,11 +23,14 @@ export class RetrievalController {
       const parsedTopK = topK !== undefined ? Number(topK) : undefined;
       const parsedThreshold =
         threshold !== undefined ? Number(threshold) : undefined;
+      const parsedMinScore =
+        minScore !== undefined ? Number(minScore) : undefined;
 
       const result = await this.retrievalService.query({
         question: question.trim(),
         topK: parsedTopK,
         threshold: parsedThreshold,
+        minScore: parsedMinScore,
       });
 
       res.status(200).json(result);

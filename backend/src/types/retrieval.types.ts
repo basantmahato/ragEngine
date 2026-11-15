@@ -2,6 +2,7 @@ export interface QueryRequestDto {
   question: string;
   topK?: number;
   threshold?: number;
+  minScore?: number;
 }
 
 export interface RetrievedChunk {
@@ -33,6 +34,7 @@ export interface VectorSearchRepository {
 
 export interface SemanticCacheRepository {
   ensureCollection(): Promise<void>;
+  clear(): Promise<void>;
   findSimilar(
     queryVector: number[],
     similarityThreshold?: number,

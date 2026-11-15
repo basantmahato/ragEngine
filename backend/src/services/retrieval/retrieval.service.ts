@@ -11,6 +11,7 @@ import type {
 export class RetrievalService implements RetrievalUseCase {
   private readonly defaultSimilarityThreshold = 0.92;
   private readonly defaultTopK = 5;
+  private readonly defaultMinScore = 0.50;
 
   constructor(
     private readonly embeddings: QueryEmbeddingProvider,
@@ -30,6 +31,10 @@ export class RetrievalService implements RetrievalUseCase {
       dto.threshold && dto.threshold > 0 && dto.threshold <= 1
         ? dto.threshold
         : this.defaultSimilarityThreshold;
+    const minScore =
+      dto.minScore !== undefined && dto.minScore >= 0 && dto.minScore <= 1
+        ? dto.minScore
+        : this.defaultMinScore;
 
     // 1. Embed query (using RETRIEVAL_QUERY optimization)
     const queryVector = await this.embeddings.embedQuery(question);
@@ -47,8 +52,9 @@ export class RetrievalService implements RetrievalUseCase {
       };
     }
 
-    // 3. Cache Miss: Retrieve top-K relevant chunks from vector store
-    const retrievedChunks = await this.vectorRepository.search(queryVector, topK);
+    // 3. Cache Miss: Retrieve top-K relevant chunks from vector store and filter low-score noise
+    const rawChunks = await this.vectorRepository.search(queryVector, topK);
+    const retrievedChunks = rawChunks.filter((chunk) => chunk.score >= minScore);
     const context = retrievedChunks.map((chunk) => chunk.text);
 
     // 4. Generate Answer with Resilient LLM (with automatic fallback)

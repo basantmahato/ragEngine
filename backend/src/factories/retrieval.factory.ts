@@ -19,7 +19,7 @@ export const createRetrievalRoutes = (
   const cacheRepo = new QdrantSemanticCacheRepository(qdrant);
   const embeddings = new GeminiEmbeddingService(gemini);
   const primaryLlm = new GeminiLlmService(gemini, "gemini-2.5-flash");
-  const fallbackLlm = new GeminiLlmService(gemini, "gemini-1.5-flash");
+  const fallbackLlm = new GeminiLlmService(gemini, "gemini-3.5-flash-lite");
   const resilientLlm = new FallbackLlmService(primaryLlm, fallbackLlm);
   const service = new RetrievalService(
     embeddings,

@@ -41,6 +41,7 @@ describe("RetrievalService", () => {
 
     const mockCacheRepo: SemanticCacheRepository = {
       ensureCollection: async () => {},
+      clear: async () => {},
       findSimilar: async () => cachedEntry,
       save: async () => {},
     };
@@ -96,6 +97,7 @@ describe("RetrievalService", () => {
     let savedAnswer = "";
     const mockCacheRepo: SemanticCacheRepository = {
       ensureCollection: async () => {},
+      clear: async () => {},
       findSimilar: async () => null, // Cache miss!
       save: async (q, _v, a, _s) => {
         savedQuestion = q;
@@ -137,6 +139,7 @@ describe("RetrievalService", () => {
       { search: async () => [] },
       {
         ensureCollection: async () => {},
+        clear: async () => {},
         findSimilar: async () => null,
         save: async () => {},
       },
